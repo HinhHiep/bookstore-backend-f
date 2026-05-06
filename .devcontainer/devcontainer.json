@@ -1,0 +1,45 @@
+{
+  "name": "Bookstore Backend",
+
+  "image": "mcr.microsoft.com/devcontainers/javascript-node:20",
+
+  "hostRequirements": {
+    "cpus": 4
+  },
+
+  "workspaceFolder": "/workspaces/${localWorkspaceFolderBasename}",
+
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "dbaeumer.vscode-eslint",
+        "esbenp.prettier-vscode",
+        "mongodb.mongodb-vscode",
+        "rangav.vscode-thunder-client",
+        "GitHub.copilot-chat"
+      ]
+    },
+    "codespaces": {
+      "openFiles": [
+        "src/server.js"
+      ]
+    }
+  },
+
+  "forwardPorts": [5000],
+
+  "portsAttributes": {
+    "5000": {
+      "label": "Backend API",
+      "onAutoForward": "openPreview"
+    }
+  },
+
+  "postCreateCommand": "npm install",
+
+  "postAttachCommand": "npm run dev",
+
+  "remoteEnv": {
+    "NODE_ENV": "development"
+  }
+}
