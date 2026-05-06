@@ -13,7 +13,7 @@ app.use(morgan("dev"));
 
 // 🔥 API
 app.use("/api", routes);
-app.use("/chatbot", chatbotRoutes);
+app.use("/api/chatbot", chatbotRoutes);
 
 // 🔥 error handler (luôn để cuối)
 app.use(errorHandler);

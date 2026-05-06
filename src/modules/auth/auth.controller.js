@@ -9,6 +9,7 @@ export const register = async (req, res, next) => {
 
     return res.status(201).json({
       status: "success",
+      message: result.message,
       data: result,
     });
   } catch (error) {
@@ -25,7 +26,11 @@ export const verifyEmail = async (req, res, next) => {
 
     return res.status(200).json({
       status: "success",
-      data: result,
+      message: result.message,
+      data: {
+        user: result.user,
+        accessToken: result.accessToken,
+      },
     });
   } catch (error) {
     next(error);
@@ -41,7 +46,11 @@ export const login = async (req, res, next) => {
 
     return res.status(200).json({
       status: "success",
-      data: result,
+      message: result.message,
+      data: {
+        user: result.user,
+        accessToken: result.accessToken,
+      },
     });
   } catch (error) {
     next(error);
@@ -59,6 +68,7 @@ export const forgotPassword = async (req, res, next) => {
 
     return res.status(200).json({
       status: "success",
+      message: result.message,
       data: result,
     });
   } catch (error) {
@@ -75,6 +85,7 @@ export const resetPassword = async (req, res, next) => {
 
     return res.status(200).json({
       status: "success",
+      message: result.message,
       data: result,
     });
   } catch (error) {
