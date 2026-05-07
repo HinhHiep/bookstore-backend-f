@@ -1,15 +1,12 @@
 import * as orderService from "./order.service.js";
 
 /**
- * 🔥 CREATE ORDER
+ * CREATE ORDER
  * POST /api/orders
  */
 export const createOrder = async (req, res, next) => {
   try {
-    const order = await orderService.createOrder(
-      req.body,
-      req.user?._id // có thể guest
-    );
+    const order = await orderService.createOrder(req.body, req.user?._id);
 
     return res.status(201).json({
       status: "success",
@@ -21,7 +18,7 @@ export const createOrder = async (req, res, next) => {
 };
 
 /**
- * 📦 GET MY ORDERS
+ * GET MY ORDERS
  * GET /api/orders/my
  */
 export const getMyOrders = async (req, res, next) => {
@@ -38,15 +35,29 @@ export const getMyOrders = async (req, res, next) => {
 };
 
 /**
- * 🔍 GET ORDER DETAIL
+ * GET ALL ORDERS (ADMIN)
+ * GET /api/orders
+ */
+export const getAllOrders = async (req, res, next) => {
+  try {
+    const orders = await orderService.getAllOrders();
+
+    return res.json({
+      status: "success",
+      data: orders,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+/**
+ * GET ORDER DETAIL
  * GET /api/orders/:id
  */
 export const getOrderById = async (req, res, next) => {
   try {
-    const order = await orderService.getOrderById(
-      req.params.id,
-      req.user
-    );
+    const order = await orderService.getOrderById(req.params.id, req.user);
 
     return res.json({
       status: "success",
@@ -58,7 +69,7 @@ export const getOrderById = async (req, res, next) => {
 };
 
 /**
- * � GET ORDER BY CODE
+ * GET ORDER BY CODE
  * GET /api/orders/code/:orderCode
  */
 export const getOrderByCode = async (req, res, next) => {
@@ -76,15 +87,12 @@ export const getOrderByCode = async (req, res, next) => {
 };
 
 /**
- * �🔄 UPDATE STATUS (ADMIN)
+ * UPDATE STATUS (ADMIN)
  * PATCH /api/orders/:id/status
  */
 export const updateStatus = async (req, res, next) => {
   try {
-    const order = await orderService.updateOrderStatus(
-      req.params.id,
-      req.body.status
-    );
+    const order = await orderService.updateOrderStatus(req.params.id, req.body.status);
 
     return res.json({
       status: "success",
@@ -96,16 +104,12 @@ export const updateStatus = async (req, res, next) => {
 };
 
 /**
- * ❌ CANCEL ORDER
+ * CANCEL ORDER
  * POST /api/orders/:id/cancel
  */
 export const cancelOrder = async (req, res, next) => {
   try {
-    const order = await orderService.cancelOrder(
-      req.params.id,
-      req.user,
-      req.body.reason
-    );
+    const order = await orderService.cancelOrder(req.params.id, req.user, req.body.reason);
 
     return res.json({
       status: "success",
@@ -117,15 +121,12 @@ export const cancelOrder = async (req, res, next) => {
 };
 
 /**
- * 💸 REFUND ORDER (ADMIN)
+ * REFUND ORDER (ADMIN)
  * POST /api/orders/:id/refund
  */
 export const refundOrder = async (req, res, next) => {
   try {
-    const order = await orderService.refundOrder(
-      req.params.id,
-      req.body
-    );
+    const order = await orderService.refundOrder(req.params.id, req.body);
 
     return res.json({
       status: "success",
@@ -138,10 +139,7 @@ export const refundOrder = async (req, res, next) => {
 
 export const checkout = async (req, res, next) => {
   try {
-    const order = await orderService.checkout(
-      req.user._id,
-      req.body
-    );
+    const order = await orderService.checkout(req.user._id, req.body);
 
     return res.status(201).json({
       status: "success",
@@ -164,14 +162,3 @@ export const guestCheckout = async (req, res, next) => {
     next(err);
   }
 };
-
-
-
-
-
-
-
-
-
-
-

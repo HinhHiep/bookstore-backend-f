@@ -16,6 +16,8 @@
 
 
 import "dotenv/config";
+import crypto from "crypto";
+globalThis.crypto = crypto;
 
 import app from "./app.js";
 import { connectDB } from "./config/db.js";

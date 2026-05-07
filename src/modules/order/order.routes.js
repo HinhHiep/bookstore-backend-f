@@ -2,13 +2,14 @@ import express from "express";
 import {
   createOrder,
   getMyOrders,
+  getAllOrders,
   getOrderById,
   getOrderByCode,
   updateStatus,
   cancelOrder,
   refundOrder,
-    checkout,
-    guestCheckout,
+  checkout,
+  guestCheckout,
 } from "./order.controller.js";
 
 import { protect } from "../../common/middlewares/auth.middleware.js";
@@ -16,51 +17,22 @@ import { authorize } from "../../common/middlewares/role.middleware.js";
 
 const router = express.Router();
 
-// 🔥 create (guest + user)
+// create (guest + user)
 router.post("/", createOrder);
 router.post("/guest-checkout", guestCheckout);
-// 🔍 public lookup by order code
+
+// public lookup by order code
 router.get("/code/:orderCode", getOrderByCode);
-// 🔐 user
+
+// user/admin queries
 router.get("/my", protect, getMyOrders);
+router.get("/", protect, authorize("admin"), getAllOrders);
 router.get("/:id", protect, getOrderById);
 router.post("/:id/cancel", protect, cancelOrder);
 router.post("/checkout", protect, checkout);
 
-
-// 🔐 admin
+// admin actions
 router.patch("/:id/status", protect, authorize("admin"), updateStatus);
 router.post("/:id/refund", protect, authorize("admin"), refundOrder);
 
 export default router;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

@@ -100,6 +100,9 @@ export const getBooks = async (query) => {
     isNew,
     isDiscount,
     keyword,
+    minPrice,
+    maxPrice,
+    minRating,
     page = 1,
     limit = 10,
     sortBy = "createdAt",
@@ -127,6 +130,35 @@ export const getBooks = async (query) => {
 
   if (isDiscount === "true") {
     filter.isDiscount = true;
+  }
+
+  // price filter on effective selling price:
+  // use discountPrice when available, otherwise use price
+  const parsedMinPrice = Number(minPrice);
+  const parsedMaxPrice = Number(maxPrice);
+  const priceExpr = [];
+
+  if (!Number.isNaN(parsedMinPrice)) {
+    priceExpr.push({
+      $gte: [{ $ifNull: ["$discountPrice", "$price"] }, parsedMinPrice],
+    });
+  }
+
+  if (!Number.isNaN(parsedMaxPrice)) {
+    priceExpr.push({
+      $lte: [{ $ifNull: ["$discountPrice", "$price"] }, parsedMaxPrice],
+    });
+  }
+
+  if (priceExpr.length === 1) {
+    filter.$expr = priceExpr[0];
+  } else if (priceExpr.length > 1) {
+    filter.$expr = { $and: priceExpr };
+  }
+
+  const parsedMinRating = Number(minRating);
+  if (!Number.isNaN(parsedMinRating)) {
+    filter.rating = { $gte: parsedMinRating };
   }
 
   // search theo title, author, keywords

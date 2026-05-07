@@ -1,6 +1,7 @@
 import Order from "./order.model.js";
 import Book from "../book/book.model.js";
 import mongoose from "mongoose";
+import { sendEmail } from "../../common/utils/email.js";
 
 /**
  * 🔥 Generate order code
@@ -9,6 +10,52 @@ const generateOrderCode = () => {
   const date = new Date().toISOString().slice(0, 10).replace(/-/g, "");
   const random = Math.floor(100000 + Math.random() * 900000);
   return `OD${date}-${random}`;
+};
+
+const sendOrderConfirmationEmail = async (order) => {
+  const to = order?.customerInfo?.email;
+  if (!to) return;
+
+  const frontendUrl = process.env.FRONTEND_URL || "http://localhost:5173";
+  const trackUrl = `${frontendUrl}/track-order`;
+
+  const itemsHtml = (order.items || [])
+    .map(
+      (item) => `
+        <tr>
+          <td style="padding:8px;border-bottom:1px solid #eee;">${item.title}</td>
+          <td style="padding:8px;border-bottom:1px solid #eee;text-align:center;">${item.quantity}</td>
+          <td style="padding:8px;border-bottom:1px solid #eee;text-align:right;">${item.finalPrice?.toLocaleString("vi-VN")}đ</td>
+        </tr>
+      `
+    )
+    .join("");
+
+  const html = `
+    <div style="font-family:Arial,sans-serif;max-width:640px;margin:0 auto;">
+      <h2 style="color:#ea580c;">Dat hang thanh cong</h2>
+      <p>Cam on ban da dat hang tai BookStore.</p>
+      <p><strong>Ma tra cuu don hang:</strong> ${order.orderCode}</p>
+      <p><strong>Tong thanh toan:</strong> ${order.finalAmount?.toLocaleString("vi-VN")}đ</p>
+      <table style="width:100%;border-collapse:collapse;margin-top:12px;">
+        <thead>
+          <tr>
+            <th style="text-align:left;padding:8px;border-bottom:2px solid #eee;">San pham</th>
+            <th style="text-align:center;padding:8px;border-bottom:2px solid #eee;">SL</th>
+            <th style="text-align:right;padding:8px;border-bottom:2px solid #eee;">Don gia</th>
+          </tr>
+        </thead>
+        <tbody>${itemsHtml}</tbody>
+      </table>
+      <p style="margin-top:16px;">
+        Ban co the tra cuu don hang tai:
+        <a href="${trackUrl}" target="_blank" rel="noreferrer">${trackUrl}</a>
+      </p>
+      <p style="color:#666;">Vui long luu lai ma don de theo doi trang thai giao hang.</p>
+    </div>
+  `;
+
+  await sendEmail(to, `[BookStore] Xac nhan don hang ${order.orderCode}`, html);
 };
 
 /**
@@ -133,7 +180,16 @@ export const createOrder = async (data, userId) => {
 
     await session.commitTransaction();
 
-    return order[0];
+    const createdOrder = order[0];
+
+    // Send confirmation email in background-like flow: do not fail order creation if email fails.
+    try {
+      await sendOrderConfirmationEmail(createdOrder);
+    } catch (emailError) {
+      console.error("Failed to send order confirmation email:", emailError?.message || emailError);
+    }
+
+    return createdOrder;
   } catch (error) {
     await session.abortTransaction();
     throw error;
@@ -358,3 +414,10 @@ export const guestCheckout = async (data) => {
   return order;
 };
 
+
+/**
+ * ?? GET ALL ORDERS (ADMIN)
+ */
+export const getAllOrders = async () => {
+  return Order.find({}).sort({ createdAt: -1 });
+};
