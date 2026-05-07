@@ -58,7 +58,25 @@ export const getOrderById = async (req, res, next) => {
 };
 
 /**
- * 🔄 UPDATE STATUS (ADMIN)
+ * � GET ORDER BY CODE
+ * GET /api/orders/code/:orderCode
+ */
+export const getOrderByCode = async (req, res, next) => {
+  try {
+    const orderCode = req.params.orderCode?.replace(/^#/, "").trim();
+    const order = await orderService.getOrderByCode(orderCode);
+
+    return res.json({
+      status: "success",
+      data: order,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+/**
+ * �🔄 UPDATE STATUS (ADMIN)
  * PATCH /api/orders/:id/status
  */
 export const updateStatus = async (req, res, next) => {

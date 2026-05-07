@@ -122,7 +122,7 @@ export const getBooks = async (query) => {
   }
 
   if (isNew === "true") {
-    filter.isNew = true;
+    filter.isNewArrival = true;
   }
 
   if (isDiscount === "true") {
@@ -639,7 +639,7 @@ export const getNewBooks = async (query) => {
   dateFrom.setDate(dateFrom.getDate() - daysNumber);
 
   const filter = {
-    isNew: true,
+    isNewArrival: true,
     status: "active",
     createdAt: { $gte: dateFrom },
   };

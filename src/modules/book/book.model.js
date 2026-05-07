@@ -147,7 +147,7 @@ const bookSchema = new Schema(
       default: false,
     },
 
-    isNew: {
+    isNewArrival: {
       type: Boolean,
       default: false,
     },
@@ -185,7 +185,7 @@ bookSchema.index({ isbn: 1 }, { sparse: true, unique: true });
 bookSchema.index({ categoryId: 1 });
 bookSchema.index({ status: 1 });
 bookSchema.index({ isFeatured: 1 });
-bookSchema.index({ isNew: 1 });
+bookSchema.index({ isNewArrival: 1 });
 bookSchema.index({ isDiscount: 1 });
 bookSchema.index({ rating: -1 });
 bookSchema.index({ sold: -1 });

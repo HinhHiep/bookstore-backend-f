@@ -137,6 +137,18 @@ export const getCategoryById = async (id) => {
   return category;
 };
 
+export const getCategoryBySlug = async (slug) => {
+  const category = await Category.findOne({ slug }).lean();
+
+  if (!category) {
+    const error = new Error("Category not found");
+    error.status = 404;
+    throw error;
+  }
+
+  return category;
+};
+
 /**
  * 🌳 GET CHILDREN CATEGORIES
  * 

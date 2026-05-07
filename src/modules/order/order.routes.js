@@ -3,6 +3,7 @@ import {
   createOrder,
   getMyOrders,
   getOrderById,
+  getOrderByCode,
   updateStatus,
   cancelOrder,
   refundOrder,
@@ -18,6 +19,8 @@ const router = express.Router();
 // 🔥 create (guest + user)
 router.post("/", createOrder);
 router.post("/guest-checkout", guestCheckout);
+// 🔍 public lookup by order code
+router.get("/code/:orderCode", getOrderByCode);
 // 🔐 user
 router.get("/my", protect, getMyOrders);
 router.get("/:id", protect, getOrderById);

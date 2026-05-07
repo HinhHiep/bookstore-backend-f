@@ -76,7 +76,41 @@ export const getCategories = async (req, res, next) => {
 };
 
 /**
- * 📋 GET CATEGORY DETAIL
+ * � GET CATEGORY BY SLUG
+ * GET /api/categories/slug/:slug
+ *
+ * @description Lấy danh mục theo slug để dùng trong trang category.
+ * @pathParams
+ *   - slug: string
+ *
+ * @response 200: { status: "success", data: { _id, name, slug, description, ... } }
+ * @errors
+ *   - 400: Invalid slug
+ *   - 404: Category not found
+ */
+export const getCategoryBySlug = async (req, res, next) => {
+  try {
+    const { slug } = req.params;
+
+    if (!slug || typeof slug !== "string") {
+      const error = new Error("Slug is required");
+      error.status = 400;
+      throw error;
+    }
+
+    const category = await categoryService.getCategoryBySlug(slug);
+
+    return res.status(200).json({
+      status: "success",
+      data: category,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+/**
+ * �📋 GET CATEGORY DETAIL
  * GET /api/categories/:id
  * 
  * @description Lấy thông tin chi tiết 1 danh mục theo ID.

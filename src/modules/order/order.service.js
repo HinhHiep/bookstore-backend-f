@@ -290,6 +290,14 @@ export const getOrderById = async (orderId, user) => {
   return order;
 };
 
+export const getOrderByCode = async (orderCode) => {
+  const order = await Order.findOne({ orderCode });
+
+  if (!order) throw new Error("Order not found");
+
+  return order;
+};
+
 import Cart from "../cart/cart.model.js";
 
 /**
